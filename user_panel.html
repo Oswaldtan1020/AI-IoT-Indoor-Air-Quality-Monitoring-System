@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAQ User Panel</title>
+
+  <!-- Reuse your existing styles -->
+  <link rel="stylesheet" href="user_login.css">
+  <link rel="stylesheet" href="user_panel.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="login-bg dashboard-bg">
+
+  <div id="shootingStar"></div>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-title">
+      IAQ User Panel
+      <span class="view-only-badge">
+        <i class="fa-solid fa-lock"></i> Live View
+      </span>
+    </div>
+
+    <div class="d-flex align-items-center">
+      <!-- NOTIFICATION BELL -->
+      <div class="notification-wrapper me-3">
+
+        <button class="notification-btn"
+                onclick="toggleNotifications()">
+
+          <i class="fa-solid fa-bell"></i>
+
+          <span id="notifBadge"
+                class="notif-badge">
+            0
+          </span>
+
+        </button>
+
+        <!-- Notification Dropdown -->
+        <div id="notifDropdown"
+            class="notif-dropdown">
+
+          <div class="notif-title">
+            Air Quality Alerts
+          </div>
+
+          <div id="notifList">
+            <div class="notif-empty">
+              No notifications
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="user-info me-3">
+        <span id="userNameText">User</span>
+        <span id="lastLoginText" style="font-size: 0.8rem;"></span>
+      </div>
+
+      <div class="profile-menu ms-3">
+        <button class="profile-btn" onclick="toggleProfileMenu()">
+            <i class="fa-solid fa-user-circle me-1"></i>
+            <span id="profileName">User</span>
+            <i class="fa-solid fa-chevron-down ms-1"></i>
+        </button>
+
+        <div id="profileDropdown" class="profile-dropdown">
+            <div class="profile-item muted">
+                <i class="fa-solid fa-id-badge me-2"></i>
+                Role: <strong>User</strong>
+            </div>
+
+            <div class="profile-item">
+                <i class="fa-solid fa-moon me-2"></i>
+                Dark Mode
+                <label class="switch ms-auto">
+                    <input type="checkbox" id="darkToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-item logout" onclick="logoutUser()">
+                <i class="fa-solid fa-right-from-bracket me-2"></i>
+                Logout
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Animated Gradient Waves Background -->
+  <div class="wave wave1"></div>
+  <div class="wave wave2"></div>
+  <div class="wave wave3"></div>
+
+  <div class="container dashboard-wrapper">
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-10">
+        <h2 class="section-title">Live Sensor Overview</h2>
+        <p class="section-subtitle">
+          View indoor air quality from all registered sensors.  
+          <span class="info-note">This panel is read-only – changes can only be made by administrators.</span>
+        </p>
+        <small class="text-muted">
+          Auto-refreshes every 30 seconds
+        </small>
+        <p class="info-note mt-2">
+          Air quality status is automatically classified based on CO₂ and PM2.5 thresholds
+          aligned with WHO & ASHRAE international indoor air quality guidelines.
+        </p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+
+        <!-- Loading / error -->
+        <div id="sensorLoading" class="text-center my-4">
+          <div class="spinner-border text-light"></div>
+          <div class="mt-2">Loading sensor data...</div>
+        </div>
+
+        <p id="sensorError" class="text-danger text-center mb-3" style="display:none;"></p>
+
+        <!-- Sensor cards -->
+        <div id="sensorGrid" class="sensor-grid"></div>
+
+        <!-- History -->
+        <hr class="my-5">
+
+        <h4 class="text-center">IAQ History</h4>
+
+        <canvas id="iaqChart" height="120"></canvas>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div id="meteorContainer"></div>
+  <div id="pageFade" class="page-fade"></div>
+
+  <script src="theme.js"></script>
+
+  <script>
+    const API = "http://127.0.0.1:5000/api";
+
+    // ---------- AUTH CHECK ----------
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      window.location.href = "user_login.html";
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("jwt");
+      // keep rememberUser so login page can prefill
+      window.location.href = "user_login.html";
+    }
+
+    function toggleProfileMenu() {
+        document.getElementById("profileDropdown").classList.toggle("show");
+    }
+
+    function formatDateTime(dateString) {
+      if (!dateString) return "First Login";
+
+      const date = new Date(dateString);
+
+      return date.toLocaleString("en-MY", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    }
+
+    // close menu if clicking outside
+    document.addEventListener("click", (e) => {
+        const menu = document.getElementById("profileDropdown");
+        if (!e.target.closest(".profile-menu")) {
+            menu?.classList.remove("show");
+        }
+    });
+
+    // ---------- DISPLAY USER INFO ----------
+    document.addEventListener("DOMContentLoaded", () => {
+      const name = localStorage.getItem("userName") || "User";
+      const lastLogin = localStorage.getItem("lastLogin") || "";
+
+      document.getElementById("userNameText").textContent = name;
+      if (lastLogin) {
+        document.getElementById("lastLoginText").innerText =
+          "Last Login: " + formatDateTime(lastLogin);
+      }
+
+      // load theme preference
+      const toggle = document.getElementById("darkToggle");
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+        toggle.checked = true;
+      }
+
+      setupThemeToggle();
+
+      // 🔥 LOAD IMMEDIATELY
+      fetchSensors();
+      fetchIaqHistory();
+
+      // 🔄 AUTO REFRESH
+      setInterval(() => {
+        fetchSensors();
+        fetchIaqHistory();
+      }, 30000);
+    });
+
+    // ---------- THEME TOGGLE (same behaviour as login) ----------
+    function triggerShootingStar() {
+      const star = document.getElementById("shootingStar");
+      if (!star) return;
+
+      star.style.animation = "none";
+      void star.offsetWidth;
+      star.style.animation = "shootingStarAnim 0.8s ease-out";
+    }
+
+    function meteorShower() {
+      const chance = Math.random();
+      if (chance > 0.50) return;
+
+      const container = document.getElementById("meteorContainer");
+      if (!container) return;
+
+      const meteorCount = Math.floor(Math.random() * 8) + 5;
+
+      for (let i = 0; i < meteorCount; i++) {
+        const xStart = Math.random() * window.innerWidth;
+        const yStart = Math.random() * window.innerHeight * 0.3;
+
+        const meteor = document.createElement("div");
+        meteor.classList.add("meteor");
+
+        const mx = (Math.random() * 600) + 300;
+        const my = (Math.random() * 500) + 200;
+
+        meteor.style.left = `${xStart}px`;
+        meteor.style.top = `${yStart}px`;
+        meteor.style.setProperty("--mx", `${mx}px`);
+        meteor.style.setProperty("--my", `${my}px`);
+        meteor.style.animation = `meteorFall ${0.6 + Math.random()}s ease-out`;
+
+        container.appendChild(meteor);
+        setTimeout(() => meteor.remove(), 1500);
+      }
+    }
+
+    function setupThemeToggle() {
+      const toggle = document.getElementById("darkToggle");
+      if (!toggle) return;
+
+      toggle.addEventListener("change", () => {
+        if (toggle.checked) {
+          document.body.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+          triggerShootingStar();
+          meteorShower();
+        } else {
+          document.body.classList.remove("dark");
+          localStorage.setItem("theme", "light");
+        }
+      });
+    }
+
+    // ---------- FETCH & RENDER SENSORS (VIEW ONLY) ----------
+    let notifications = [];
+    let unreadCount = 0;
+
+    function toggleNotifications() {
+      document
+        .getElementById("notifDropdown")
+        .classList.toggle("show");
+
+      unreadCount = 0;
+      updateBadge();
+    }
+
+    function updateBadge() {
+      document.getElementById("notifBadge").innerText =
+        unreadCount;
+    }
+
+    function fetchSensors() {
+      const loadingEl = document.getElementById("sensorLoading");
+      const errorEl = document.getElementById("sensorError");
+      const grid = document.getElementById("sensorGrid");
+
+      loadingEl.style.display = "block";
+      errorEl.style.display = "none";
+      errorEl.textContent = "";
+      grid.innerHTML = "";
+
+      // Change `/sensors` if your endpoint name is different
+      fetch(`${API}/readings`)
+      .then(async res => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || res.status);
+        }
+        return res.json();
+      })
+      .then(data => {
+        loadingEl.style.display = "none";
+
+        // data could be {sensors: [...]} or just [...]
+        const sensors = Array.isArray(data) ? data : (data.sensors || []);
+
+        if (!sensors.length) {
+          errorEl.style.display = "block";
+          errorEl.textContent = "No sensor data available.";
+          return;
+        }
+
+        sensors.forEach(s => {
+          const card = buildSensorCard(s);
+          grid.appendChild(card);
+
+          // 🚨 CHECK ALERTS
+          checkThreshold(s);
+
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        loadingEl.style.display = "none";
+        errorEl.style.display = "block";
+        errorEl.textContent = "Failed to load sensor data. Please try again later.";
+      });
+    }
+
+    function buildSensorCard(r) {
+      const status =
+        r.co2 <= 1000 && r.pm25 <= 12 ? "GOOD" :
+        r.co2 <= 2000 && r.pm25 <= 35 ? "WARNING" :
+        "DANGEROUS";
+
+      const statusClass =
+        status === "GOOD" ? "good" :
+        status === "WARNING" ? "warning" : "bad";
+
+      const card = document.createElement("div");
+      card.className = `sensor-card clickable-card ${statusClass}`;
+
+      card.onclick = () => {
+        window.location.href =
+          `user_ai_recommendation.html?room=${encodeURIComponent(r.room_name)}`;
+      };
+
+      card.innerHTML = `
+        <div class="sensor-header">
+          <div>
+            <div class="sensor-name">${r.room_name}</div>
+            <div class="sensor-location">
+              <i class="fa-solid fa-door-open me-1"></i> Indoor Area
+            </div>
+          </div>
+          <span class="status-pill ${statusClass}">${status}</span>
+        </div>
+
+        <div class="sensor-values">
+          <div>
+            <span class="sensor-label">Temperature</span>
+            <span class="sensor-value">${r.temperature} °C</span>
+          </div>
+          <div>
+            <span class="sensor-label">Humidity</span>
+            <span class="sensor-value">${r.humidity} %</span>
+          </div>
+          <div>
+            <span class="sensor-label">CO₂</span>
+            <span class="sensor-value">${r.co2} ppm</span>
+          </div>
+          <div>
+            <span class="sensor-label">PM2.5</span>
+            <span class="sensor-value">${r.pm25} µg/m³</span>
+          </div>
+        </div>
+
+        <div class="last-update">
+          <i class="fa-regular fa-clock me-1"></i>
+          Last updated: ${formatDateTime(r.timestamp)}
+        </div>
+      `;
+
+      return card;
+    }
+
+    function checkThreshold(sensor) {
+      let message = "";
+      let type = "";
+
+      // Dangerous
+      if (sensor.co2 > 2000 || sensor.pm25 > 35) {
+
+        type = "danger";
+
+        message =
+          `🚨 Dangerous air quality detected in ${sensor.room_name}`;
+
+      }
+
+      // Warning
+      else if (sensor.co2 > 1000 || sensor.pm25 > 12) {
+
+        type = "warning";
+
+        message =
+          `⚠️ Warning air quality in ${sensor.room_name}`;
+      }
+
+      if (!message) return;
+
+      // prevent duplicate spam
+      const exists = notifications.find(
+        n => n.message === message
+      );
+
+      if (exists) return;
+
+      if (notifications.length > 20) {
+        notifications.pop();
+      }
+
+      notifications.unshift({
+        message,
+        type,
+        time: new Date().toLocaleTimeString()
+      });
+
+      unreadCount++;
+      updateBadge();
+
+      renderNotifications();
+
+      showToast(message, type);
+    }
+
+    function renderNotifications() {
+      const list =
+        document.getElementById("notifList");
+
+      if (!notifications.length) {
+
+        list.innerHTML = `
+          <div class="notif-empty">
+            No notifications
+          </div>
+        `;
+
+        return;
+      }
+
+      list.innerHTML = "";
+
+      notifications.forEach(n => {
+
+        list.innerHTML += `
+          <div class="notif-item ${n.type}">
+            <div>${n.message}</div>
+
+            <div class="notif-time">
+              ${n.time}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function showToast(message, type) {
+
+      const container =
+        document.getElementById("toastContainer");
+
+      const toast =
+        document.createElement("div");
+
+      toast.className =
+        `toast-alert ${type}`;
+
+      toast.innerHTML = `
+        ${message}
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add("show");
+      }, 100);
+
+      setTimeout(() => {
+
+        toast.classList.remove("show");
+
+        setTimeout(() => {
+          toast.remove();
+        }, 400);
+
+      }, 4000);
+    }
+
+    function fetchIaqHistory() {
+      fetch(`${API}/iaq-history?limit=50`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(result => {
+        drawChart(result.data);
+      })
+      .catch(err => console.error(err));
+    }
+
+    let iaqChart;
+
+    function drawChart(data) {
+      const labels = data.map(d =>
+        new Date(d.timestamp).toLocaleTimeString()
+      );
+
+      const co2 = data.map(d => d.co2);
+      const pm25 = data.map(d => d.pm25);
+
+      const ctx = document.getElementById("iaqChart");
+
+      if (iaqChart) iaqChart.destroy();
+
+      iaqChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            { label: "CO₂ (ppm)", data: co2, borderWidth: 2 },
+            { label: "PM2.5 (µg/m³)", data: pm25, borderWidth: 2 }
+          ]
+        }
+      });
+    }
+  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>
+
+</body>
+</html>

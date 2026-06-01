@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAQ User Login</title>
+  <link rel="stylesheet" href="user_login.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+
+<body class="login-bg">
+  <div id="shootingStar"></div>
+
+  <!-- Dark Mode Toggle -->
+  <div class="theme-toggle">
+    <input type="checkbox" id="darkToggle">
+    <label for="darkToggle" class="toggle-switch">
+        <span class="icon sun">☀️</span>
+        <span class="icon moon">🌙</span>
+    </label>
+  </div>
+
+  <!-- Animated Gradient Waves Background -->
+  <div class="wave wave1"></div>
+  <div class="wave wave2"></div>
+  <div class="wave wave3"></div>
+
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+      <div class="d-flex flex-column align-items-center">
+
+          <!-- Welcome text -->
+          <h2 class="welcome-text mb-4 text-center">Welcome User</h2>
+
+          <!-- Login card -->
+          <div id="loginCard" class="login-card p-4 shadow">
+
+              <h3 class="text-center mb-3">User Login</h3>
+
+              <div class="mb-3">
+                <label>Username</label>
+                <input id="username" type="text" class="form-control" placeholder="Enter user username">
+              </div>
+
+              <div class="mb-3 position-relative">
+                <label>Password</label>
+                <input id="password" type="password" class="form-control" placeholder="Enter password">
+
+                <!-- New eye icon like add user page -->
+                <i class="fa-solid fa-eye toggle-eye" id="toggleEye" onclick="togglePassword()"></i>
+              </div>
+
+              <div class="d-flex align-items-center mb-2">
+                <input type="checkbox" id="rememberMe" class="me-2">
+                <label for="rememberMe">Remember Me</label>
+              </div>
+
+              <button id="loginBtn" onclick="login()" class="btn btn-primary w-100 mb-2">
+                <span id="loginText">Login</span>
+                <div id="spinner" class="spinner" style="display:none;"></div>
+              </button>
+
+              <p id="errorMsg" class="text-danger text-center"></p>
+
+              <div class="text-center mt-2">
+                <a href="#" onclick="forgotPassword()">Forgot Password?</a>
+              </div>
+
+          </div> <!-- end login card -->
+
+      </div> <!-- end column -->
+
+  </div> <!-- end container -->
+
+  <div id="meteorContainer"></div>
+
+  <div id="pageFade" class="page-fade"></div>
+
+  <script src="theme.js"></script>
+
+  <script>
+    const API = "http://localhost:5000/api";
+
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const card = document.getElementById("loginCard");
+      const errorMsg = document.getElementById("errorMsg");
+      const btn = document.getElementById("loginBtn");
+      const spinner = document.getElementById("spinner");
+      const loginText = document.getElementById("loginText");
+
+      // Reset error
+      errorMsg.innerText = "";
+
+      // Start Loader
+      btn.classList.add("loading");
+      spinner.style.display = "inline-block";
+      loginText.innerText = "Checking...";
+
+      fetch(`${API}/user-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+
+          console.log("Login Success Data:", data);
+
+          // Remember Me
+          if (document.getElementById("rememberMe").checked) {
+            localStorage.setItem("rememberUser", username);
+          } else {
+            localStorage.removeItem("rememberUser");
+          }
+
+          // Success animation
+          card.classList.add("login-success");
+
+          // Save JWT
+          localStorage.setItem("jwt", data.token);
+
+          // Save admin name
+          localStorage.setItem("userName", data.name);
+          localStorage.setItem("userRole", data.role);
+
+          // Start fade-out transition
+          document.getElementById("pageFade").classList.add("active");
+
+          // Redirect after fade completes
+          setTimeout(() => {
+            if (data.role === "admin") {
+              window.location.href = "admin_panel.html";
+            } else {
+              window.location.href = "user_panel.html";
+            }
+          }, 650);
+
+        } else {
+          // Wrong login
+          card.classList.remove("shake");
+          void card.offsetWidth;
+          card.classList.add("shake");
+
+          errorMsg.innerText = "Invalid Login Credentials";
+
+          // Reset button
+          btn.classList.remove("loading");
+          spinner.style.display = "none";
+          loginText.innerText = "Login";
+        }
+      })
+      .catch(err => {
+        errorMsg.innerText = "Server Error";
+
+        btn.classList.remove("loading");
+        spinner.style.display = "none";
+        loginText.innerText = "Login";
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedUser = localStorage.getItem("rememberUser");
+      if (savedUser) {
+        document.getElementById("username").value = savedUser;
+        document.getElementById("rememberMe").checked = true;
+      }
+    });
+
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      const icon = document.getElementById("toggleEye");
+
+      if (pwd.type === "password") {
+        pwd.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        pwd.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    }
+
+    function forgotPassword() {
+      alert("Please contact system admin to reset password.");
+    }
+
+    const toggle = document.getElementById("darkToggle");
+
+    // Load saved preference
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      toggle.checked = true;
+    }
+
+    function triggerShootingStar() {
+      const star = document.getElementById("shootingStar");
+
+      // Restart animation if triggered multiple times
+      star.style.animation = "none";
+      void star.offsetWidth; // force reflow
+
+      star.style.animation = "shootingStarAnim 0.8s ease-out";
+    }
+
+    // When dark mode toggles ON
+    toggle.addEventListener("change", () => {
+      if (toggle.checked) {
+        document.body.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+
+        // FIRE THE SHOOTING STAR
+        triggerShootingStar();
+        meteorShower();
+
+      } else {
+        document.body.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+      }
+    });
+
+    function meteorShower() {
+      const chance = Math.random();
+
+      // Only trigger 50% of the time
+      if (chance > 0.50) return;
+
+      const container = document.getElementById("meteorContainer");
+      if (!container) return;
+
+      // Number of meteors (random between 5–12)
+      const meteorCount = Math.floor(Math.random() * 8) + 5;
+
+      for (let i = 0; i < meteorCount; i++) {
+        const xStart = Math.random() * window.innerWidth;
+        const yStart = Math.random() * window.innerHeight * 0.3; // top 30% of screen
+
+        const meteor = document.createElement("div");
+        meteor.classList.add("meteor");
+
+        // Random trajectory
+        const mx = (Math.random() * 600) + 300; 
+        const my = (Math.random() * 500) + 200;
+
+        meteor.style.left = `${xStart}px`;
+        meteor.style.top = `${yStart}px`;
+
+        meteor.style.setProperty("--mx", `${mx}px`);
+        meteor.style.setProperty("--my", `${my}px`);
+
+        meteor.style.animation = `meteorFall ${0.6 + Math.random()}s ease-out`;
+
+        container.appendChild(meteor);
+
+        // Remove after animation
+        setTimeout(() => meteor.remove(), 1500);
+      }
+    }
+  </script>
+</body>
+</html>

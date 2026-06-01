@@ -1,0 +1,797 @@
+/* ==========================================================
+   GLOBAL FONT & THEME VARIABLES
+   - Dark mode is default
+   - .light-mode on <html> switches to light background
+========================================================== */
+
+:root {
+  /* Background + text */
+  --body-bg: #0f172a;      /* dark background */
+  --body-text: #e5e7eb;
+
+  /* Navbar */
+  --nav-bg: #1e293b;
+  --nav-text: #e5e7eb;
+
+  /* Primary buttons */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  /* Borders / muted */
+  --border: #cbd5e1;
+  --muted: #6b7280;
+}
+
+/* When slider is ON (light mode), your JS adds .light-mode to <html> */
+.light-mode {
+  --body-bg: #f4f6f9;
+  --body-text: #111827;
+
+  --nav-bg: #ffffff;
+  --nav-text: #111827;
+}
+
+/* Base text + background */
+body {
+  background: var(--body-bg) !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--body-text) !important;
+}
+
+
+
+/* ==========================================================
+   NAVBAR
+========================================================== */
+
+.modern-navbar {
+  background: var(--nav-bg) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-brand,
+.navbar .dropdown-toggle,
+.navbar .dropdown-toggle span {
+  color: var(--nav-text) !important;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  font-size: 20px;
+}
+
+/* Top-right "Admin" button appearance */
+.navbar .btn-secondary {
+  background-color: rgba(148, 163, 184, 0.25) !important;
+  border-color: rgba(148, 163, 184, 0.6) !important;
+  color: var(--nav-text) !important;
+}
+
+.navbar .btn-secondary:hover,
+.navbar .btn-secondary:focus,
+.navbar .btn-secondary:active {
+  background-color: rgba(148, 163, 184, 0.45) !important;
+  border-color: rgba(148, 163, 184, 0.9) !important;
+}
+
+.navbar .position-relative {
+    width: fit-content;   /* 🔥 IMPORTANT FIX */
+}
+
+
+/* ===============================
+   ADMIN SECTION NAV (RECTANGLE)
+=============================== */
+.admin-section-nav {
+  background: #ffffff !important;
+  border-radius: 12px 12px 0 0;              /* ⬅ less round */
+  padding: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.admin-section-nav .nav-link {
+  border-radius: 12px;              /* ⬅ rectangular */
+  font-weight: 600;
+  color: #64748b;
+  padding: 10px 16px;
+  transition: all 0.2s ease;
+}
+
+/* ACTIVE TAB */
+.admin-section-nav .nav-link.active {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #ffffff;
+  box-shadow: inset 0 -2px 0 rgba(255,255,255,0.25);
+}
+
+/* HOVER */
+.admin-section-nav .nav-link:hover:not(.active) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* ==========================================================
+   DROPDOWN MENU (ALWAYS LIGHT)
+========================================================== */
+
+.modern-dropdown {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #111827 !important;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.modern-dropdown .dropdown-item {
+  color: #111827 !important;
+  padding: 10px 15px;
+}
+
+.modern-dropdown .dropdown-item:hover {
+  background: #f3f4f6 !important;
+}
+
+
+
+/* ==========================================================
+   WELCOME BANNER
+========================================================== */
+
+.welcome-banner {
+  position: fixed;
+  top: -70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4c8bfd;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  opacity: 0;
+  transition: 0.6s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  z-index: 2000;
+}
+
+.welcome-banner.show {
+  top: 22px;
+  opacity: 1;
+}
+
+
+
+/* ==========================================================
+   TABS (CARD STYLE, ALWAYS LIGHT)
+========================================================== */
+
+.modern-tabs .nav-link {
+  background: #e5e7eb !important;
+  color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px 6px 0 0;
+  margin-right: 4px;
+  padding: 10px 18px;
+  font-weight: 500;
+}
+
+.modern-tabs .nav-link.active {
+  background: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+}
+
+
+
+/* ==========================================================
+   TAB CONTENT CARD (ALWAYS LIGHT)
+========================================================== */
+
+.modern-tab-content {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0 0 8px 8px;
+  padding-top: 20px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* All text inside the main card is dark for readability */
+.container,
+.container h4,
+.container h5,
+.container p,
+.container label,
+.container th,
+.container td {
+  color: #111827 !important;
+}
+
+
+
+/* ==========================================================
+   TABLES (ALWAYS LIGHT)
+========================================================== */
+
+.modern-table {
+  width: 100%;
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modern-table thead {
+  background: #f9fafb !important;
+  color: #111827 !important;
+}
+
+.modern-table th,
+.modern-table td {
+  border-color: #e5e7eb !important;
+}
+
+.modern-table tbody tr:hover {
+  background: #f3f4f6 !important;
+}
+
+
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+/* Keep existing Bootstrap colors for warning/danger/info */
+
+
+
+/* ==========================================================
+   MODALS (ALWAYS LIGHT)
+========================================================== */
+
+.modal-content {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 10px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header,
+.modal-footer {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+}
+
+.modern-input {
+  background: #f9fafb !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+}
+
+
+
+/* ==========================================================
+   LAST LOGIN TEXT
+========================================================== */
+
+#lastLogin {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 14px;
+  color: var(--body-text) !important;
+}
+
+
+
+/* ==========================================================
+   SLIDER SWITCH (THEME TOGGLE)
+========================================================== */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "🌙";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 2px;
+  background: white;
+  text-align: center;
+  line-height: 20px;
+  font-size: 13px;
+  border-radius: 50%;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+  content: "☀️";
+}
+
+
+
+/* ==========================================================
+   WELCOME TEXT ANIMATION
+========================================================== */
+
+#welcomeText {
+  animation: welcomeGlow 0.8s ease-out;
+}
+
+@keyframes welcomeGlow {
+  0% { opacity: 0; transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+
+
+/* ==========================================================
+   RESPONSIVE FIXES
+========================================================== */
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 16px;
+  }
+
+  .welcome-banner {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+
+  .modern-dropdown {
+    min-width: 230px;
+  }
+}
+
+.ai-box {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.ai-box ul {
+  margin-top: 8px;
+  padding-left: 18px;
+}
+
+.ai-box li {
+  margin-bottom: 6px;
+}
+
+/* =========================================
+   FORCE SECTION NAV TO MATCH CARD WIDTH
+   (NO HTML CHANGES)
+========================================= */
+
+/* Neutralise the inner container */
+.container.mt-3 {
+  max-width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Make the nav bar span full card width */
+.admin-section-nav {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Clickable row */
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.clickable-row:hover {
+  background-color: #f1f5f9;
+}
+
+/* Selected row */
+.clickable-row.selected {
+  background-color: #dbeafe !important;
+  font-weight: 600;
+}
+
+.ai-loading {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* SIDEBAR */
+.sidebar-left {
+  width: 260px;
+  min-width: 260px;
+
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+
+  background: var(--nav-bg);  /* 🔥 follow theme */
+  color: var(--nav-text);
+
+  transition: width 0.3s ease;
+  overflow: hidden;
+
+  border-right: 1px solid rgba(255,255,255,0.1);
+  padding: 12px;
+}
+
+.light-mode .sidebar-left {
+  background: #ffffff;
+  color: #111827;
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar-left.collapsed {
+  width: 60px !important;
+  min-width: 60px;
+  padding: 8px;
+}
+
+/* HIDE TEXT */
+.sidebar-left.collapsed .label,
+.sidebar-left.collapsed .sidebar-title {
+  display: none;
+}
+
+/* BUTTON STYLE */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 10px;
+  color: var(--nav-text);
+  background: transparent;
+  border: none;
+
+  padding: 12px;
+  border-radius: 10px;
+  transition: 0.2s;
+
+  outline: 2px solid gray;
+}
+
+.light-mode .sidebar-item {
+  color: #374151;
+}
+
+.sidebar-item:hover {
+  background: #1f2937;
+  color: white;
+}
+
+.light-mode .sidebar-item:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.sidebar-item.active {
+  background: #2563eb;
+  color: white;
+}
+
+.flex-grow-1 {
+  flex: 1 !important;
+  width: 100%;
+}
+
+/* CENTER ICON WHEN COLLAPSED */
+.sidebar-left.collapsed .sidebar-item {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.toggle-btn {
+  background: #1f2937;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background: #374151;
+}
+
+.alert-popup {
+    position: fixed;   /* 🔥 MUST HAVE */
+    bottom: 20px;
+    right: 20px;
+
+    z-index: 9999;
+
+    display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.alert-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.alert-box h2 {
+  color: red;
+}
+
+.alert-box button {
+  margin-top: 10px;
+  padding: 8px 15px;
+  border: none;
+  background: red;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.inner-notification {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.notification-dropdown {
+    position: fixed;   /* 🔥 CHANGE TO FIXED */
+    top: 70px;         /* adjust based on navbar height */
+    right: 30px;       /* distance from right edge */
+
+    width: 340px;
+    max-height: 450px;
+
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+
+    overflow: hidden;
+    z-index: 9999;
+
+    display: none;
+}
+
+.notification-dropdown.show {
+    display: block;
+}
+
+.notif-header {
+    padding: 12px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.notif-body {
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+/* Each notification */
+.notification-item {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.notification-item:hover {
+    background: #f5f5f5;
+}
+
+.notification-new {
+    background: #fff3f3;
+}
+
+/* Animation */
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background: #f5f5f5;
+}
+
+.notification-new {
+  background: rgba(255, 0, 0, 0.1);
+}
+
+.hidden {
+  display: none !important;
+}
+
+#alertPopup {
+    position: fixed;        /* 🔥 KEY FIX */
+    bottom: 20px;           /* distance from bottom */
+    right: 20px;            /* move to right side */
+
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+
+    z-index: 9999;
+
+    display: none;          /* hidden by default */
+    min-width: 250px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.inner-notification {
+    max-height: 25  0px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 5px 10px;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.inner-notification .notification-item {
+    padding: 8px;
+    font-size: 13px;
+    border-bottom: 1px solid #eee;
+}
+
+.inner-notification .notification-item:hover {
+    background: #e9ecef;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ✅ Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* ✅ Popup Box */
+.popup-box {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  width: 300px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ✅ Green Check */
+.check-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 5px solid #28a745;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: #28a745;
+  margin: 0 auto 15px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999; /* 🔥 IMPORTANT */
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  min-width: 300px;
+}

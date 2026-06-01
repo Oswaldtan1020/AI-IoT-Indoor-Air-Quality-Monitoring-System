@@ -1,0 +1,209 @@
+/* -----------------------------------
+   MAIN STYLE
+----------------------------------- */
+body {
+  background: linear-gradient(135deg, #4a90e2, #1c3b70);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+body.dark {
+  background: linear-gradient(135deg, #121212, #1f1f1f);
+}
+
+/* -----------------------------------
+   DARK MODE TOGGLE BUTTON
+----------------------------------- */
+.dark-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 100;
+}
+
+.dark-toggle i {
+  font-size: 18px;
+}
+
+/* -----------------------------------
+   SUCCESS POPUP
+----------------------------------- */
+#successPopup {
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2ecc71;
+  color: white;
+  padding: 20px 40px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 18px;
+  opacity: 0;
+  transition: 0.5s;
+  z-index: 200;
+}
+
+#successPopup.active {
+  top: 40px;
+  opacity: 1;
+}
+
+#successPopup i {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+/* -----------------------------------
+   CARD UI
+----------------------------------- */
+.card-ui {
+  width: 420px;
+  padding: 35px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  color: white;
+}
+
+body.dark .card-ui {
+  background: rgba(40, 40, 40, 0.4);
+}
+
+/* -----------------------------------
+   INPUTS
+----------------------------------- */
+.form-control, .form-select {
+  border-radius: 10px;
+  border: none;
+  padding: 12px;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 15px;
+  top: 43px;
+  z-index: 10;
+  color: #333;
+  cursor: pointer;
+}
+
+/* DARK MODE FIX */
+body.dark .toggle-eye {
+  color: #e6e6e6 !important;      /* high-contrast */
+  filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); /* makes it readable */
+}
+
+/* -----------------------------------
+   ERROR TEXT
+----------------------------------- */
+.error-text {
+  color: #ffdddd;
+  font-size: 13px;
+}
+
+/* -----------------------------------
+   PASSWORD STRENGTH BAR
+----------------------------------- */
+.strength-box {
+  width: 100%;
+  height: 7px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#strengthBar {
+  height: 100%;
+  width: 0%;
+  background: #ddd;
+  transition: 0.3s;
+}
+
+/* -----------------------------------
+   BUTTONS
+----------------------------------- */
+.btn-primary {
+  background: #2ecc71;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.btn-primary:hover {
+  background: #27ae60;
+}
+
+/* ===============================
+   SUCCESS OVERLAY
+================================ */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.success-card {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  animation: scaleIn 0.4s ease;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ===============================
+   CHECKMARK ANIMATION
+================================ */
+.checkmark svg {
+  width: 80px;
+  height: 80px;
+}
+
+.checkmark-circle {
+  stroke: #22c55e;
+  stroke-width: 4;
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  animation: drawCircle 0.6s ease forwards;
+}
+
+.checkmark-check {
+  stroke: #22c55e;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: drawCheck 0.4s ease forwards;
+  animation-delay: 0.6s;
+}
+
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}

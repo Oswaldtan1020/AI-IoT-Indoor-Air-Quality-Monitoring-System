@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assign Sensor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <!-- Reuse same animation & style -->
+  <link rel="stylesheet" href="admin_assign_sensor.css">
+</head>
+<body>
+
+<script>
+  if (!localStorage.getItem("jwt")) {
+    window.location.href = "admin_login.html";
+  }
+</script>
+
+<!-- ===============================
+     FEEDBACK OVERLAY
+=============================== -->
+<div id="feedbackOverlay" class="feedback-overlay d-none">
+  <div class="feedback-card">
+
+    <!-- SUCCESS -->
+    <div id="successIcon" class="checkmark d-none">
+      <svg viewBox="0 0 52 52">
+        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="checkmark-check" fill="none"
+          d="M14 27 l7 7 l17 -17"/>
+      </svg>
+    </div>
+
+    <!-- ERROR -->
+    <div id="errorIcon" class="error-icon d-none">❌</div>
+
+    <h5 id="feedbackText" class="mt-3"></h5>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div class="card shadow-sm p-4">
+
+    <h4 class="mb-4">📡 Assign Sensor</h4>
+
+    <div class="mb-3">
+      <label class="form-label">Select Room</label>
+      <select id="roomId" class="form-select modern-input">
+        <option value="">--Select a room--</option>
+      </select>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" onclick="assignSensor()">
+        Assign Sensor
+      </button>
+      <button class="btn btn-secondary" onclick="goBack()">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:5000/api";
+const params = new URLSearchParams(window.location.search);
+const sensorId = params.get("id");
+
+function assignSensor() {
+  const select = document.getElementById("roomId");
+  const roomId = Number(select.value); // 👈 FORCE NUMBER
+
+  if (!roomId) {
+    showError("Room is required");
+    return;
+  }
+
+  fetch(`${API}/admin/sensors/${sensorId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("jwt")}`
+    },
+    body: JSON.stringify({ room_id: roomId }) // 👈 SEND NUMBER
+  })
+  .then(async res => {
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError(data.error || "Failed to assign sensor");
+      return;
+    }
+
+    showSuccess("Sensor assigned successfully");
+  })
+  .catch(err => {
+    console.error(err);
+    showError("Server error");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", loadRooms);
+
+function loadRooms() {
+  fetch(`${API}/admin/rooms`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("jwt")}`
+    }
+  })
+  .then(res => res.json())
+  .then(rooms => {
+    const select = document.getElementById("roomId");
+
+    rooms.forEach(room => {
+      const option = document.createElement("option");
+      option.value = room.id;      // ✅ ID goes to backend
+      option.textContent = room.name; // 👁️ name for user
+      select.appendChild(option);
+    });
+  })
+  .catch(err => {
+    console.error("Load rooms error:", err);
+    showError("Failed to load rooms");
+  });
+}
+
+/* ------------------------------
+   FEEDBACK HANDLER
+------------------------------ */
+function showSuccess(message) {
+  showFeedback("success", message, "admin_panel.html#sensors");
+}
+
+function showError(message) {
+  showFeedback("error", message);
+}
+
+function showFeedback(type, message, redirectUrl = null) {
+  const overlay = document.getElementById("feedbackOverlay");
+  const successIcon = document.getElementById("successIcon");
+  const errorIcon = document.getElementById("errorIcon");
+  const text = document.getElementById("feedbackText");
+
+  successIcon.classList.add("d-none");
+  errorIcon.classList.add("d-none");
+
+  if (type === "success") {
+    successIcon.classList.remove("d-none");
+  } else {
+    errorIcon.classList.remove("d-none");
+  }
+
+  text.textContent = message;
+  overlay.classList.remove("d-none");
+
+  setTimeout(() => {
+    overlay.classList.add("d-none");
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
+    }
+  }, type === "success" ? 1200 : 1500);
+}
+
+function goBack() {
+  window.location.href = "admin_panel.html#sensors";
+}
+</script>
+
+</body>
+</html>

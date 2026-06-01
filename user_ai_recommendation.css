@@ -1,0 +1,116 @@
+/* ===============================
+   PAGE BACKGROUND
+================================ */
+body {
+  background: linear-gradient(135deg, #4a90e2, #1c3b70);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===============================
+   MAIN CARD
+================================ */
+.ai-card {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 18px;
+  padding: 35px 40px;
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* ===============================
+   HEADER
+================================ */
+.ai-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.ai-room {
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* ===============================
+   STATUS BOX
+================================ */
+.ai-status {
+  margin-top: 20px;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+/* GOOD */
+.ai-status.good {
+  background: #d9f7ff;
+  border: 1px solid #67e8f9;
+  color: #065f73;
+}
+
+/* WARNING */
+.ai-status.warning {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+}
+
+/* DANGER */
+.ai-status.danger {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #7f1d1d;
+}
+
+/* WAITING */
+.ai-status.waiting {
+  background: #fefce8;
+  border: 1px solid #fde047;
+  color: #854d0e;
+}
+
+/* ===============================
+   ACTION LIST
+================================ */
+.ai-actions {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.ai-actions li {
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.ai-footer {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ===============================
+   BUTTON
+================================ */
+.btn-back {
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 10px;
+  background: #6b7280;
+  border: none;
+  color: white;
+}
+
+.btn-back:hover {
+  background: #4b5563;
+}
