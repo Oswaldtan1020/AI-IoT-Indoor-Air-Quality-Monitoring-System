@@ -477,7 +477,7 @@
 
   async function loadNotifications() {
       try {
-          const res = await fetch("http://127.0.0.1:5000/api/alerts");
+          const res = await fetch(`${API}/alerts`);
           const data = await res.json();
 
           let list = document.getElementById("notificationList");
@@ -554,7 +554,7 @@
 
   async function checkAlerts() {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/alerts");
+        const res = await fetch(`${API}/alerts`);
         const data = await res.json();
 
         if (data.length > 0) {
@@ -651,7 +651,7 @@
 
     const startTime = Date.now();
 
-    fetch(`http://127.0.0.1:5000/api/history?start=${start}&end=${end}&room=${room}`)
+    fetch(`${API}/history?start=${start}&end=${end}&room=${room}`)
       .then(res => res.json())
       .then(data => {
 
@@ -1160,7 +1160,7 @@
       window.location.href = "admin_login.html";
     }
 
-    const API = "https://ai-iot-indoor-air-quality-monitoring-system-production.up.railway.app";
+    const API = "https://ai-iot-indoor-air-quality-monitoring-system-production.up.railway.app/api";
 
     /* --------------------------------------------------
        MAIN INITIALIZER
@@ -1726,7 +1726,7 @@
        READINGS
     -------------------------------------------------- */
     function loadReadings() {
-      fetch("http://127.0.0.1:5000/api/readings")
+      fetch(`${API}/readings`)
       .then(res => {
         if (!res.ok) throw new Error("HTTP " + res.status);
         return res.json();
