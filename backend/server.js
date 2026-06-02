@@ -13,14 +13,14 @@ const path = require('path');
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname)));
+// Serve frontend files from repository root
+app.use(express.static(path.join(__dirname, '..')));
 
 // ================================
 // Basic Root Route
 // ================================
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin_login.html'));
+  res.sendFile(path.join(__dirname, '..', 'admin_login.html'));
 });
 
 // ================================
