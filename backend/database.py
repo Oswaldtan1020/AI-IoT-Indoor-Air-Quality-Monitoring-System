@@ -1,9 +1,11 @@
+import os
 import mysql.connector
 
 def get_db():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",        # change if needed
-        password="",        # your MySQL password
-        database="iaq_admin"
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=int(os.getenv("DB_PORT"))
     )
