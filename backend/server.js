@@ -7,14 +7,21 @@ const db = require('./config/db');
 const app = express();
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+const path = require('path');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
+// Serve frontend files
+app.use(express.static(path.join(__dirname)));
+
 // ================================
 // Basic Root Route
 // ================================
-app.get('/', (req, res) => res.json({ message: 'IAQ API running' }));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin_login.html'));
+});
 
 // ================================
 // AI ROUTES (place BEFORE /api routes)
