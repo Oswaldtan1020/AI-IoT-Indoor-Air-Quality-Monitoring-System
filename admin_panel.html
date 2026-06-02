@@ -1160,7 +1160,7 @@
       window.location.href = "admin_login.html";
     }
 
-    const API = "http://localhost:5000/api";
+    const API = "https://ai-iot-indoor-air-quality-monitoring-system-production.up.railway.app";
 
     /* --------------------------------------------------
        MAIN INITIALIZER
@@ -1798,7 +1798,7 @@
     }
 
     async function getAIAdvice(temp, hum, co2, pm25) {
-      const response = await fetch("http://localhost:5000/api/iaq/suggest", {
+      const response = await fetch("https://ai-iot-indoor-air-quality-monitoring-system-production.up.railway.app/api/iaq/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -1825,7 +1825,7 @@
 
       showAILoading(); // ⏳ show spinner
 
-      fetch("http://localhost:5000/api/iaq/suggest", {
+      fetch("https://ai-iot-indoor-air-quality-monitoring-system-production.up.railway.app/api/iaq/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
