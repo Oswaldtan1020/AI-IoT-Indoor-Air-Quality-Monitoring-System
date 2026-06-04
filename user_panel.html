@@ -139,7 +139,9 @@
 
         <h4 class="text-center">IAQ History</h4>
 
-        <canvas id="iaqChart" height="120"></canvas>
+        <div style="height:400px;">
+          <canvas id="iaqChart"></canvas>
+        </div>
 
       </div>
     </div>
@@ -518,42 +520,74 @@
     }
 
     function fetchIaqHistory() {
-      fetch(`${API}/iaq-history?limit=50`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(res => res.json())
-      .then(result => {
-        drawChart(result.data);
-      })
-      .catch(err => console.error(err));
+
+      fetch(`${API}/history`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("Failed to load history");
+          }
+          return res.json();
+        })
+        .then(data => {
+
+          console.log("History Data:", data);
+
+          drawChart(data);
+
+        })
+        .catch(err => {
+          console.error("History Error:", err);
+        });
     }
 
     let iaqChart;
 
     function drawChart(data) {
+
+      if (!data || data.length === 0) {
+        console.log("No history data found");
+        return;
+      }
+
       const labels = data.map(d =>
-        new Date(d.timestamp).toLocaleTimeString()
+        new Date(d.timestamp).toLocaleString()
       );
 
       const co2 = data.map(d => d.co2);
+
       const pm25 = data.map(d => d.pm25);
 
       const ctx = document.getElementById("iaqChart");
 
-      if (iaqChart) iaqChart.destroy();
+      if (iaqChart) {
+        iaqChart.destroy();
+      }
 
       iaqChart = new Chart(ctx, {
         type: "line",
         data: {
-          labels,
+          labels: labels,
           datasets: [
-            { label: "CO₂ (ppm)", data: co2, borderWidth: 2 },
-            { label: "PM2.5 (µg/m³)", data: pm25, borderWidth: 2 }
+            {
+              label: "CO₂ (ppm)",
+              data: co2,
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: "PM2.5 (µg/m³)",
+              data: pm25,
+              borderWidth: 2,
+              tension: 0.3
+            }
           ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
         }
       });
+
     }
   </script>
 
