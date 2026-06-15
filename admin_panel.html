@@ -655,6 +655,8 @@
       .then(res => res.json())
       .then(data => {
 
+        console.log("Total records:", data.length);
+
         const sortBy = document.getElementById("sortBy").value;
         const sortOrder = document.getElementById("sortOrder").value;
 
@@ -794,6 +796,11 @@
             });
 
           });
+
+          console.log("Labels count:", labels.length);
+          console.log("First label:", labels[0]);
+          console.log("Last label:", labels[labels.length - 1]);
+          console.log(labels);
 
           // ✅ Charts
           renderChart(labels, co2Data, pm25Data);
