@@ -755,9 +755,8 @@
           let tempData = [];
           let humidityData = [];
 
+          // Build table
           data.forEach(row => {
-
-            // ✅ TABLE
             table.innerHTML += `
               <tr>
                 <td>${row.room_name}</td>
@@ -765,36 +764,35 @@
                 <td>${row.humidity} %</td>
                 <td>${row.co2 ?? "-"}</td>
                 <td>${row.pm25 ?? "-"}</td>
-                <td>
-                  ${new Date(row.timestamp).toLocaleString("en-GB")}
-                </td>
+                <td>${new Date(row.timestamp).toLocaleString("en-GB")}</td>
               </tr>
             `;
+          });
 
-            // ✅ CHART ALWAYS FOLLOW TIME ASCENDING
-            const sortedChartData = [...data].sort(
-              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          // Sort by time
+          const sortedChartData = [...data].sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          );
+
+          // Prevent exact duplicate records
+          const seen = new Set();
+
+          sortedChartData.forEach(item => {
+
+            const key = `${item.timestamp}-${item.co2}-${item.pm25}`;
+
+            if (seen.has(key)) return;
+
+            seen.add(key);
+
+            labels.push(
+              new Date(item.timestamp).toLocaleString("en-GB")
             );
 
-            labels = [];
-            co2Data = [];
-            pm25Data = [];
-            tempData = [];
-            humidityData = [];
-
-            sortedChartData.forEach(item => {
-
-              labels.push(
-                new Date(item.timestamp).toLocaleString("en-GB")
-              );
-
-              co2Data.push(item.co2);
-              pm25Data.push(item.pm25);
-              tempData.push(item.temperature);
-              humidityData.push(item.humidity);
-
-            });
-
+            co2Data.push(item.co2);
+            pm25Data.push(item.pm25);
+            tempData.push(item.temperature);
+            humidityData.push(item.humidity);
           });
 
           console.log("Labels count:", labels.length);
@@ -1028,7 +1026,7 @@
     const ctx = canvas.getContext("2d");
 
     if (labels.length > 100) {
-      canvas.width = labels.length * 25;
+      canvas.width = Math.min(labels.length * 15, 3000);
     } else {
       canvas.width = 1200;
     }
@@ -1085,7 +1083,9 @@
             borderColor: "#ef4444",   // 🔴 red
             backgroundColor: "transparent",
             borderWidth: 2,
-            tension: 0.3
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 6
           },
           {
             label: "Predicted CO₂",
@@ -1128,7 +1128,7 @@
     const canvas = document.getElementById("tempHumChart");
 
     if (labels.length > 100) {
-      canvas.width = labels.length * 25;
+      canvas.width = Math.min(labels.length * 15, 3000);
     } else {
       canvas.width = 1200;
     }
