@@ -562,18 +562,43 @@ body.dashboard-bg {
     width: 100%;
     height: 450px;
     margin-bottom: 100px;
-    overflow-x: auto; 
+
+    overflow-x: auto;
     overflow-y: hidden;
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.25) transparent;
 }
 
 .chart-wrapper {
-    min-width: 1400px;   /* adjust width as needed */
+    min-width: 1400px;   /* Increase to 1800px or 2000px if using 500 records */
     height: 450px;
 }
 
 .chart-wrapper canvas {
     width: 100% !important;
     height: 100% !important;
+}
+
+/* Chrome, Edge, Safari */
+.chart-container::-webkit-scrollbar {
+    height: 10px;
+}
+
+.chart-container::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+}
+
+.chart-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.25);
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.chart-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.45);
 }
 
 #iaqChart {
