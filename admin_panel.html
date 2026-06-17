@@ -430,11 +430,6 @@
   
   </div>
 
-  <!-- Last Login Display -->
-  <div class="text-center mt-3">
-    <p id="lastLogin" class="text-muted"></p>
-  </div>
-
   <!-- Edit User Modal -->
   <div class="modal fade" id="editUserModal">
     <div class="modal-dialog">
@@ -2178,7 +2173,7 @@
 
           this.classList.add("active");
 
-          document.querySelectorAll(".tab-pane")
+          document.querySelectorAll(".tab-content > .tab-pane")
             .forEach(tab => tab.classList.remove("show", "active"));
 
           const target = this.getAttribute("data-target");
