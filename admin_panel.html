@@ -1182,9 +1182,13 @@
 
   <!-- Main Script -->
   <script>
-    /* Redirect if not logged in */
-    if (!localStorage.getItem("jwt")) {
-      window.location.href = "admin_login.html";
+    /* Admin access check */
+    const token = localStorage.getItem("jwt");
+    const role = localStorage.getItem("role");
+
+    if (!token || role !== "admin") {
+        alert("Access denied. Admin only.");
+        window.location.href = "admin_login.html";
     }
 
     const API = "https://ai-iot-indoor-air-quality-monitoring-system-production.up.railway.app/api";

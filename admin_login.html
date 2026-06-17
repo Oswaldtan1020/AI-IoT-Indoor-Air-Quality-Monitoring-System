@@ -158,6 +158,7 @@
 
             // Save JWT + info
             localStorage.setItem("jwt", data.token);
+            localStorage.setItem("role", "admin");
             // your controller returns adminName / adminRole / lastLogin
             localStorage.setItem("adminName", data.adminName || data.name || username);
             localStorage.setItem("adminRole", data.adminRole || "admin");

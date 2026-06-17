@@ -160,12 +160,16 @@
 
     // ---------- AUTH CHECK ----------
     const token = localStorage.getItem("jwt");
-    if (!token) {
-      window.location.href = "user_login.html";
+    const role = localStorage.getItem("role");
+
+    if (!token || role !== "user") {
+        alert("Access denied.");
+        window.location.href = "user_login.html";
     }
 
     function logoutUser() {
       localStorage.removeItem("jwt");
+      localStorage.removeItem("role");
       // keep rememberUser so login page can prefill
       window.location.href = "user_login.html";
     }
