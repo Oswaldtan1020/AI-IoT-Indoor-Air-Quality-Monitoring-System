@@ -1902,25 +1902,35 @@
           readings.reduce((s,r)=>s+Number(r.humidity),0)
           / readings.length;
 
-        document.getElementById("avgTemp").innerText =
-          avgTemp.toFixed(1) + " °C";
+        const avgTempEl = document.getElementById("avgTemp");
+        if (avgTempEl) {
+          avgTempEl.innerText = avgTemp.toFixed(1) + " °C";
+        }
 
-        document.getElementById("avgHumidity").innerText =
-          avgHumidity.toFixed(1) + " %";
+        const avgHumidityEl = document.getElementById("avgHumidity");
+        if (avgHumidityEl) {
+          avgHumidityEl.innerText = avgHumidity.toFixed(1) + " %";
+        }
 
         const maxCO2 =
           readings.reduce((a,b)=>
             Number(a.co2) > Number(b.co2) ? a : b);
 
-        document.getElementById("maxCO2").innerText =
-          `${maxCO2.room_name} (${maxCO2.co2})`;
+        const maxCO2El = document.getElementById("maxCO2");
+        if (maxCO2El) {
+          maxCO2El.innerText =
+            `${maxCO2.room_name} (${maxCO2.co2})`;
+        }
 
         const maxPM =
           readings.reduce((a,b)=>
             Number(a.pm25) > Number(b.pm25) ? a : b);
 
-        document.getElementById("maxPM25").innerText =
-          `${maxPM.room_name} (${maxPM.pm25})`;
+        const maxPM25El = document.getElementById("maxPM25");
+        if (maxPM25El) {
+          maxPM25El.innerText =
+            `${maxPM.room_name} (${maxPM.pm25})`;
+        }
 
         let html = "";
 
