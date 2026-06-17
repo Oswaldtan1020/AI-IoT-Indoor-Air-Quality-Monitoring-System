@@ -2,6 +2,7 @@
 
 body.dashboard-bg {
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* ========= TOP BAR ========= */
@@ -537,4 +538,33 @@ body.dark #sensorLoading {
 
 .toast-alert.danger{
   background:#ef4444;
+}
+
+html, body {
+    height: auto !important;
+    min-height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+}
+
+body.dashboard-bg {
+    overflow-x: hidden;
+    overflow-y: auto !important;
+}
+
+.dashboard-wrapper {
+    padding-top: 100px;
+    padding-bottom: 200px;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    margin-bottom: 100px;
+}
+
+#iaqChart {
+    width: 100% !important;
+    height: 100% !important;
 }
