@@ -101,7 +101,7 @@ def get_history():
         query += " AND rm.name = %s"
         params.append(room)
 
-    limit = request.args.get('limit', 200, type=int)
+    limit = request.args.get('limit', 500, type=int)
 
     query += " ORDER BY r.timestamp DESC LIMIT %s"
     params.append(limit)
