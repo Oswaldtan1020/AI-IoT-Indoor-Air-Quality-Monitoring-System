@@ -103,7 +103,7 @@ def get_history():
 
     limit = request.args.get('limit', 800, type=int)
 
-    query += " ORDER BY r.timestamp DESC LIMIT %s"
+    query += " ORDER BY r.timestamp ASC LIMIT %s"
     params.append(limit)
 
     # ✅ USE SAME DB STYLE AS get_readings()
