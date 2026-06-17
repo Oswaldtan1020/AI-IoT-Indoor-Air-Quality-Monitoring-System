@@ -226,6 +226,41 @@
             <tbody id="readingsTable"></tbody>
           </table>
 
+          <div class="card mt-4 p-3">
+
+            <h5 id="selectedRoomTitle">
+              Selected Room: None
+            </h5>
+
+            <div class="row text-center">
+
+              <div class="col-md-3 mb-3">
+                <h6>🌡 Temperature</h6>
+                <canvas id="tempGauge"></canvas>
+                <div id="tempValue" class="fw-bold mt-2">-- °C</div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <h6>💧 Humidity</h6>
+                <canvas id="humidityGauge"></canvas>
+                <div id="humidityValue" class="fw-bold mt-2">-- %</div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <h6>🫁 CO₂</h6>
+                <canvas id="co2Gauge"></canvas>
+                <div id="co2Value" class="fw-bold mt-2">-- ppm</div>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <h6>🌫 PM2.5</h6>
+                <canvas id="pm25Gauge"></canvas>
+                <div id="pm25Value" class="fw-bold mt-2">-- µg/m³</div>
+              </div>
+
+            </div>
+          </div>
+
           <!-- AI BOX -->
           <div id="aiSuggestionBox" class="ai-box mt-4">
             <h5>AI Suggestions</h5>
@@ -579,6 +614,7 @@
       `;
 
       popup.classList.remove("hidden");
+      playSound();
 
       setTimeout(() => {
           popup.classList.add("hidden");
@@ -1020,6 +1056,94 @@
   }
 
   let chart;
+  let tempGauge;
+  let humidityGauge;
+  let co2Gauge;
+  let pm25Gauge;
+
+  function createGauge(id, value, max, color){
+
+    return new Chart(
+      document.getElementById(id),
+      {
+        type:'doughnut',
+
+        data:{
+          datasets:[{
+            data:[value, Math.max(max-value,0)],
+            backgroundColor:[
+              color,
+              "#e5e7eb"
+            ],
+            borderWidth:0
+          }]
+        },
+
+        options:{
+          rotation:-90,
+          circumference:180,
+          cutout:'75%',
+          plugins:{
+            legend:{display:false}
+          }
+        }
+      }
+    );
+  }
+
+  function showRoomGauges(room){
+
+    document.getElementById(
+      "selectedRoomTitle"
+    ).innerText =
+      "Selected Room: " + room.room_name;
+
+    if(tempGauge) tempGauge.destroy();
+    if(humidityGauge) humidityGauge.destroy();
+    if(co2Gauge) co2Gauge.destroy();
+    if(pm25Gauge) pm25Gauge.destroy();
+
+    tempGauge = createGauge(
+      "tempGauge",
+      room.temperature,
+      50,
+      "#ff6384"
+    );
+
+    humidityGauge = createGauge(
+      "humidityGauge",
+      room.humidity,
+      100,
+      "#36A2EB"
+    );
+
+    co2Gauge = createGauge(
+      "co2Gauge",
+      room.co2 || 0,
+      2000,
+      "#4CAF50"
+    );
+
+    pm25Gauge = createGauge(
+      "pm25Gauge",
+      room.pm25 || 0,
+      100,
+      "#FF9800"
+    );
+
+    // Show exact values
+    document.getElementById("tempValue").innerText =
+      `${room.temperature} °C`;
+
+    document.getElementById("humidityValue").innerText =
+      `${room.humidity} %`;
+
+    document.getElementById("co2Value").innerText =
+      `${room.co2 || 0} ppm`;
+
+    document.getElementById("pm25Value").innerText =
+      `${room.pm25 || 0} µg/m³`;
+  }
 
   function renderChart(labels, co2, pm25) {
     const canvas = document.getElementById("iaqChart");
@@ -1770,12 +1894,40 @@
           return;
         }
 
+        const avgTemp =
+          readings.reduce((s,r)=>s+Number(r.temperature),0)
+          / readings.length;
+
+        const avgHumidity =
+          readings.reduce((s,r)=>s+Number(r.humidity),0)
+          / readings.length;
+
+        document.getElementById("avgTemp").innerText =
+          avgTemp.toFixed(1) + " °C";
+
+        document.getElementById("avgHumidity").innerText =
+          avgHumidity.toFixed(1) + " %";
+
+        const maxCO2 =
+          readings.reduce((a,b)=>
+            Number(a.co2) > Number(b.co2) ? a : b);
+
+        document.getElementById("maxCO2").innerText =
+          `${maxCO2.room_name} (${maxCO2.co2})`;
+
+        const maxPM =
+          readings.reduce((a,b)=>
+            Number(a.pm25) > Number(b.pm25) ? a : b);
+
+        document.getElementById("maxPM25").innerText =
+          `${maxPM.room_name} (${maxPM.pm25})`;
+
         let html = "";
 
         readings.forEach(r => {
           html += `
             <tr class="clickable-row"
-                onclick='showAISuggestions(${JSON.stringify(r)}, event)'>
+                onclick='showAISuggestions(${JSON.stringify(r)}, event); showRoomGauges(${JSON.stringify(r)})'>
               <td>${r.room_name}</td>
               <td>${r.temperature} °C</td>
               <td>${r.humidity} %</td>
