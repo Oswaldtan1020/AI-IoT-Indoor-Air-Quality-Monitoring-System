@@ -562,6 +562,18 @@ body.dashboard-bg {
     width: 100%;
     height: 450px;
     margin-bottom: 100px;
+    overflow-x: auto; 
+    overflow-y: hidden;
+}
+
+.chart-wrapper {
+    min-width: 1400px;   /* adjust width as needed */
+    height: 450px;
+}
+
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 #iaqChart {

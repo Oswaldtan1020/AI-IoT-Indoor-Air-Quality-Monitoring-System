@@ -140,7 +140,9 @@
         <h4 class="text-center">IAQ History</h4>
 
         <div class="chart-container">
-          <canvas id="iaqChart"></canvas>
+          <div class="chart-wrapper">
+              <canvas id="iaqChart"></canvas>
+          </div>
         </div>
 
       </div>
@@ -583,19 +585,22 @@
           ]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: {
-            mode: 'index',
-            intersect: false
-          },
-          scales: {
-            x: {
-              ticks: {
-                maxTicksLimit: 10
-              }
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 20
+                    }
+                }
             }
-          }
         }
       });
 
