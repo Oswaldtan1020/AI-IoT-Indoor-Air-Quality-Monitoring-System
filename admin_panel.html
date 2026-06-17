@@ -212,38 +212,6 @@
         <div id="liveTab">
           <h4>All IAQ Readings</h4>
 
-          <div class="row mb-4">
-
-          <div class="col-md-3">
-            <div class="card shadow-sm p-3 text-center">
-              <h6>Average Temperature</h6>
-              <h3 id="avgTemp">-- °C</h3>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="card shadow-sm p-3 text-center">
-              <h6>Average Humidity</h6>
-              <h3 id="avgHumidity">-- %</h3>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="card shadow-sm p-3 text-center">
-              <h6>Highest CO₂ Room</h6>
-              <h5 id="maxCO2">--</h5>
-            </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="card shadow-sm p-3 text-center">
-              <h6>Highest PM2.5 Room</h6>
-              <h5 id="maxPM25">--</h5>
-            </div>
-          </div>
-
-        </div>
-
           <table class="table table-bordered modern-table mt-3">
             <thead>
               <tr>
@@ -257,40 +225,6 @@
             </thead>
             <tbody id="readingsTable"></tbody>
           </table>
-
-          <div class="card mt-4 p-3">
-
-          <h5 id="selectedRoomTitle">
-            Selected Room: None
-          </h5>
-
-          <div class="row text-center">
-
-            <div class="col-md-3 mb-3">
-              <h6>🌡 Temperature</h6>
-              <canvas id="tempGauge"></canvas>
-              <div id="tempValue" class="fw-bold mt-2">-- °C</div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-              <h6>💧 Humidity</h6>
-              <canvas id="humidityGauge"></canvas>
-              <div id="humidityValue" class="fw-bold mt-2">-- %</div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-              <h6>🫁 CO₂</h6>
-              <canvas id="co2Gauge"></canvas>
-              <div id="co2Value" class="fw-bold mt-2">-- ppm</div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-              <h6>🌫 PM2.5</h6>
-              <canvas id="pm25Gauge"></canvas>
-              <div id="pm25Value" class="fw-bold mt-2">-- µg/m³</div>
-            </div>
-
-          </div>
 
           <!-- AI BOX -->
           <div id="aiSuggestionBox" class="ai-box mt-4">
@@ -426,6 +360,13 @@
         </div>
       </div>
     </div>
+  </div>
+  
+  </div>
+
+  <!-- Last Login Display -->
+  <div class="text-center mt-3">
+    <p id="lastLogin" class="text-muted"></p>
   </div>
 
   <!-- Edit User Modal -->
@@ -638,7 +579,6 @@
       `;
 
       popup.classList.remove("hidden");
-      playSound();
 
       setTimeout(() => {
           popup.classList.add("hidden");
@@ -711,7 +651,7 @@
 
     const startTime = Date.now();
 
-    fetch(`https://ai-iot-indoor-air-quality-monitoring.onrender.com/api/history?start=${start}&end=${end}&room=${room}&limit=500`)
+    fetch(`https://ai-iot-indoor-air-quality-monitoring.onrender.com/api/history?start=${start}&end=${end}&room=${room}&limit=800`)
       .then(res => res.json())
       .then(data => {
 
@@ -1080,10 +1020,6 @@
   }
 
   let chart;
-  let tempGauge;
-  let humidityGauge;
-  let co2Gauge;
-  let pm25Gauge;
 
   function renderChart(labels, co2, pm25) {
     const canvas = document.getElementById("iaqChart");
@@ -1186,90 +1122,6 @@
     });
   }
 
-  function createGauge(id, value, max, color){
-
-    return new Chart(
-      document.getElementById(id),
-      {
-        type:'doughnut',
-
-        data:{
-          datasets:[{
-            data:[value, Math.max(max-value,0)],
-            backgroundColor:[
-              color,
-              "#e5e7eb"
-            ],
-            borderWidth:0
-          }]
-        },
-
-        options:{
-          rotation:-90,
-          circumference:180,
-          cutout:'75%',
-          plugins:{
-            legend:{display:false}
-          }
-        }
-      }
-    );
-  }
-
-  function showRoomGauges(room){
-
-    document.getElementById(
-      "selectedRoomTitle"
-    ).innerText =
-      "Selected Room: " + room.room_name;
-
-    if(tempGauge) tempGauge.destroy();
-    if(humidityGauge) humidityGauge.destroy();
-    if(co2Gauge) co2Gauge.destroy();
-    if(pm25Gauge) pm25Gauge.destroy();
-
-    tempGauge = createGauge(
-      "tempGauge",
-      room.temperature,
-      50,
-      "#ff6384"
-    );
-
-    humidityGauge = createGauge(
-      "humidityGauge",
-      room.humidity,
-      100,
-      "#36A2EB"
-    );
-
-    co2Gauge = createGauge(
-      "co2Gauge",
-      room.co2 || 0,
-      2000,
-      "#4CAF50"
-    );
-
-    pm25Gauge = createGauge(
-      "pm25Gauge",
-      room.pm25 || 0,
-      100,
-      "#FF9800"
-    );
-
-    // Show exact values
-    document.getElementById("tempValue").innerText =
-      `${room.temperature} °C`;
-
-    document.getElementById("humidityValue").innerText =
-      `${room.humidity} %`;
-
-    document.getElementById("co2Value").innerText =
-      `${room.co2 || 0} ppm`;
-
-    document.getElementById("pm25Value").innerText =
-      `${room.pm25 || 0} µg/m³`;
-  }
-
   let tempChart;
 
   function renderTempHumidityChart(labels, temp, humidity) {
@@ -1351,6 +1203,7 @@
       const adminId = localStorage.getItem("adminId");
 
       document.getElementById("profileLast").innerText = "Loading...";
+      document.getElementById("lastLogin").innerText = "Last Login: Loading...";
 
       fetch(`${API}/admin/login-history/${adminId}`, {
         headers: {
@@ -1370,10 +1223,14 @@
 
         document.getElementById("profileLast").innerText =
           formatDateTime(last);
+        document.getElementById("lastLogin").innerText =
+          "Last Login: " + formatDateTime(last);
       })
       .catch(err => {
         console.error("Login history error:", err);
         document.getElementById("profileLast").innerText = "Unavailable";
+        document.getElementById("lastLogin").innerText =
+          "Last Login: Unavailable";
       });
 
       document.getElementById("welcomeText").innerText = `Welcome ${name}`;
@@ -1913,40 +1770,12 @@
           return;
         }
 
-        const avgTemp =
-          readings.reduce((s,r)=>s+Number(r.temperature),0)
-          / readings.length;
-
-        const avgHumidity =
-          readings.reduce((s,r)=>s+Number(r.humidity),0)
-          / readings.length;
-
-        document.getElementById("avgTemp").innerText =
-          avgTemp.toFixed(1) + " °C";
-
-        document.getElementById("avgHumidity").innerText =
-          avgHumidity.toFixed(1) + " %";
-
-        const maxCO2 =
-          readings.reduce((a,b)=>
-            Number(a.co2) > Number(b.co2) ? a : b);
-
-        document.getElementById("maxCO2").innerText =
-          `${maxCO2.room_name} (${maxCO2.co2})`;
-
-        const maxPM =
-          readings.reduce((a,b)=>
-            Number(a.pm25) > Number(b.pm25) ? a : b);
-
-        document.getElementById("maxPM25").innerText =
-          `${maxPM.room_name} (${maxPM.pm25})`;
-
         let html = "";
 
         readings.forEach(r => {
           html += `
             <tr class="clickable-row"
-                onclick='showAISuggestions(${JSON.stringify(r)}, event); showRoomGauges(${JSON.stringify(r)})'>
+                onclick='showAISuggestions(${JSON.stringify(r)}, event)'>
               <td>${r.room_name}</td>
               <td>${r.temperature} °C</td>
               <td>${r.humidity} %</td>
@@ -1992,9 +1821,7 @@
       const ul = document.getElementById("aiActions");
       ul.innerHTML = "";
 
-      const suggestions = row.aiSuggestions || [];
-
-      suggestions.forEach(action => {
+      row.aiSuggestions.forEach(action => {
         const li = document.createElement("li");
         li.textContent = action;
         ul.appendChild(li);
