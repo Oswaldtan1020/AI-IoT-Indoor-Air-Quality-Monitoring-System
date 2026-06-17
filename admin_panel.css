@@ -795,3 +795,18 @@ input:checked + .slider:before {
   border-radius: 10px;
   min-width: 300px;
 }
+
+#tempValue,
+#humidityValue,
+#co2Value,
+#pm25Value{
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+body.light-mode #tempValue,
+body.light-mode #humidityValue,
+body.light-mode #co2Value,
+body.light-mode #pm25Value{
+    color: #111827;
+}
