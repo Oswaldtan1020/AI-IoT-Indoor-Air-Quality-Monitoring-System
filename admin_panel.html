@@ -427,13 +427,6 @@
       </div>
     </div>
   </div>
-  
-  </div>
-
-  <!-- Last Login Display -->
-  <div class="text-center mt-3">
-    <p id="lastLogin" class="text-muted"></p>
-  </div>
 
   <!-- Edit User Modal -->
   <div class="modal fade" id="editUserModal">
@@ -1358,7 +1351,6 @@
       const adminId = localStorage.getItem("adminId");
 
       document.getElementById("profileLast").innerText = "Loading...";
-      document.getElementById("lastLogin").innerText = "Last Login: Loading...";
 
       fetch(`${API}/admin/login-history/${adminId}`, {
         headers: {
@@ -1378,14 +1370,10 @@
 
         document.getElementById("profileLast").innerText =
           formatDateTime(last);
-        document.getElementById("lastLogin").innerText =
-          "Last Login: " + formatDateTime(last);
       })
       .catch(err => {
         console.error("Login history error:", err);
         document.getElementById("profileLast").innerText = "Unavailable";
-        document.getElementById("lastLogin").innerText =
-          "Last Login: Unavailable";
       });
 
       document.getElementById("welcomeText").innerText = `Welcome ${name}`;
